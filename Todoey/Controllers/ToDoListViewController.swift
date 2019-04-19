@@ -15,7 +15,7 @@ class ToDoListViewController: UITableViewController {
     
     var selectedCategory : Category? {
         didSet{
-            loadItems()
+//            loadItems()
         }
     }
     
@@ -96,12 +96,12 @@ class ToDoListViewController: UITableViewController {
             //what will happen once the user clicks the Add item button on our UIAlert
             
             
-            
-            let newItem = Item(context: self.context)
-            newItem.title = textfield.text!
-            newItem.done = false
-            newItem.parentCategory = self.selectedCategory
-            self.itemArray.append(newItem)
+//
+//            let newItem = Item(context: self.context)
+//            newItem.title = textfield.text!
+//            newItem.done = false
+//            newItem.parentCategory = self.selectedCategory
+//            self.itemArray.append(newItem)
             
             self.saveItems()
             
@@ -131,28 +131,28 @@ class ToDoListViewController: UITableViewController {
         self.tableView.reloadData()
         
     }
-    
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
-        
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-
-        if let additionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-        } else {
-            request.predicate = categoryPredicate
-        }
-        
-//        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, predicate])
-//        
-//        request.predicate = compoundPredicate
-        
-        do {
-            itemArray = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context \(error)")
-        }
-    }
-    
+//
+//    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
+//
+//        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+//
+//        if let additionalPredicate = predicate {
+//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+//        } else {
+//            request.predicate = categoryPredicate
+//        }
+//
+////        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, predicate])
+////
+////        request.predicate = compoundPredicate
+//
+//        do {
+//            itemArray = try context.fetch(request)
+//        } catch {
+//            print("Error fetching data from context \(error)")
+//        }
+//    }
+//
     
 
 }
@@ -160,34 +160,34 @@ class ToDoListViewController: UITableViewController {
 
 //Mark: - Search bar methods
 
-extension ToDoListViewController: UISearchBarDelegate {
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-        
-        //Query the database (case and diacritic insensitive)
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        loadItems(with: request, predicate: predicate)
-        
-        
-    }
-    // triggers only when the text has changed or the cross button has been pressed
-    // Takes you back to the original list of items
-    // Resign first responder makes keyboard go away
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text?.count == 0 {
-            loadItems()
-            
-            // Dispatch cue allows things to happen in the foreground without freezing the app
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-        }
-        
-    }
-}
+//extension ToDoListViewController: UISearchBarDelegate {
+//
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        let request : NSFetchRequest<Item> = Item.fetchRequest()
+//
+//        //Query the database (case and diacritic insensitive)
+//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+//
+//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//
+//        loadItems(with: request, predicate: predicate)
+//
+//
+//    }
+//    // triggers only when the text has changed or the cross button has been pressed
+//    // Takes you back to the original list of items
+//    // Resign first responder makes keyboard go away
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        if searchBar.text?.count == 0 {
+//            loadItems()
+//
+//            // Dispatch cue allows things to happen in the foreground without freezing the app
+//            DispatchQueue.main.async {
+//                searchBar.resignFirstResponder()
+//            }
+//        }
+//
+//    }
+
 
 
