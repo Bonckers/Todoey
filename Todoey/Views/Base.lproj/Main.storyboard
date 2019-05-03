@@ -44,13 +44,12 @@
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="akt-U7-D1M">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
-                                <action selector="addButtonPresed:" destination="6YO-ab-Vma" id="vJ7-lc-18n"/>
+                                <action selector="addButtonPressed:" destination="mUe-dt-bNU" id="on1-zA-QsO"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m6O-lM-tMl" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="6YO-ab-Vma" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1625" y="86"/>
         </scene>

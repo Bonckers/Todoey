@@ -68,16 +68,19 @@ class ToDoListViewController: UITableViewController {
     //MARK: - Tableview Delegate Method
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        //print(itemArray[indexPath.row])
-        // Delete from row
-        // context must be deleted first
-//        context.delete(itemArray[indexPath.row])
-//        itemArray.remove(at: indexPath.row)
-       
-        //adds & removes checkmarks
-//        toDoItem[indexPath.row].done = !toDoItem[indexPath.row].done
-//
-//        saveItems()
+        if let item = toDoItem?[indexPath.row] {
+            do {
+                try realm.write {
+                    item.done = !item.done
+// how to delete in realm
+                    //  realm.delete(item)
+                    }
+            }  catch {
+                print("Error saving done status, \(error)")
+            }
+        }
+        
+        tableView.reloadData()
 
         //stop being grey in the row permanently
         tableView.deselectRow(at: indexPath, animated: true)
@@ -87,11 +90,10 @@ class ToDoListViewController: UITableViewController {
     }
 
     //Mark: - Add New Items
-    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
         var textfield = UITextField()
-    
+        
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
@@ -102,6 +104,7 @@ class ToDoListViewController: UITableViewController {
                     try self.realm.write {
                         let newItem = Item()
                         newItem.title = textfield.text!
+                        newItem.dateCreated = Date()
                         currentCategory.items.append(newItem)
                     }
                 } catch {
@@ -110,7 +113,7 @@ class ToDoListViewController: UITableViewController {
             }
             
             self.tableView.reloadData()
-        
+            
         }
         
         alert.addTextField { (alertTextField) in
@@ -122,82 +125,43 @@ class ToDoListViewController: UITableViewController {
         
         present(alert, animated: true, completion: nil)
 
-        
     }
     
-    // not needed in realm
-//    func saveItems () {
-//
-//        do {
-//           try context.save()
-//        } catch {
-//            print("Error saving context \(error)")
-//        }
-//
-//        self.tableView.reloadData()
-//
-//    }
+
 
     func loadItems() {
         
         toDoItem = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
-
-//        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-//
-//        if let additionalPredicate = predicate {
-//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-//        } else {
-//            request.predicate = categoryPredicate
-//        }
-//
-////        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, predicate])
-////
-////        request.predicate = compoundPredicate
-//
-//        do {
-//            itemArray = try context.fetch(request)
-//        } catch {
-//            print("Error fetching data from context \(error)")
-//        }
         
         tableView.reloadData()
     }
-
-    
-
 }
 
 
 //Mark: - Search bar methods
 
-//extension ToDoListViewController: UISearchBarDelegate {
-//
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        let request : NSFetchRequest<Item> = Item.fetchRequest()
-//
-//        //Query the database (case and diacritic insensitive)
-//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-//
-//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//
-//        loadItems(with: request, predicate: predicate)
-//
-//
-//    }
-//    // triggers only when the text has changed or the cross button has been pressed
-//    // Takes you back to the original list of items
-//    // Resign first responder makes keyboard go away
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        if searchBar.text?.count == 0 {
-//            loadItems()
-//
-//            // Dispatch cue allows things to happen in the foreground without freezing the app
-//            DispatchQueue.main.async {
-//                searchBar.resignFirstResponder()
-//            }
-//        }
-//
-//    }
+extension ToDoListViewController: UISearchBarDelegate {
 
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        toDoItem = toDoItem?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
+        
+        tableView.reloadData()
+        
+    }
+    
+    // triggers only when the text has changed or the cross button has been pressed
+    // Takes you back to the original list of items
+    // Resign first responder makes keyboard go away
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            
+            // Dispatch cue allows things to happen in the foreground without freezing the app
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
 
-
+    }
+}
